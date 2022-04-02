@@ -8,6 +8,7 @@ import java.lang.String as String
 from java.lang import Short
 import thread
 
+
 class Interface_structure:
     # self.label: JLabel
     # self.enable_btn: JButton
@@ -141,9 +142,16 @@ class BurpExtender(IBurpExtender, ISessionHandlingAction, ITab):
         requestInfo = self._helpers.analyzeRequest(currentRequest)
         headers = requestInfo.getHeaders()
         msgBody = currentRequest.getRequest()[requestInfo.getBodyOffset():]
-        print self.headers_strings
+        print headers
         for i in self.headers_strings:
-            headers.add(i)
+            replaced = False
+            for j in range(len(headers)):
+                if i.split()[0] in headers[j]:
+                    headers[j] = i
+                    replaced = True
+                    break
+            if not replaced:
+                headers.add(i)
         message = self._helpers.buildHttpMessage(headers, msgBody)
         print self._helpers.bytesToString(message)
         currentRequest.setRequest(message)
